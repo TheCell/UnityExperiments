@@ -1,4 +1,5 @@
-﻿Shader "Toon/Lit Dissolve DoubleTex" {
+﻿// Shader from https://twitter.com/minionsart/status/1005590210476900352
+Shader "Toon/Lit Dissolve DoubleTex" {
     Properties {
         _Color ("Primary Color", Color) = (1,1,1,1)
         _MainTex ("Primary (RGB)", 2D) = "white" {}
