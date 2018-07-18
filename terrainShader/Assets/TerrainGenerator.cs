@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
 {
-    public int tileCountX = 30;
-    public int tileCountZ = 30;
-    public float width = 10.0f;
-    public float length = 10.0f;
-    public float height = 5.0f;
+    public int tileCountX = 200;
+    public int tileCountZ = 200;
+    public float width = 100.0f;
+    public float length = 100.0f;
+    public float height = 70.0f;
     public float worldHighlightScale = 0.03f;
     private System.Random worldSeedGenerator = new System.Random();
     public int worldSeed;
