@@ -82,6 +82,7 @@
 			UV = IN.uvRockColor;
 			UV = IN.worldPos.xy;
 
+			// see https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
 			blending = normalize(max(worldNormal, 0.00001)); // Force weights to sum to 1.0
 			float b = (blending.x + blending.y + blending.z);
 			blending /= float3(b, b, b);
