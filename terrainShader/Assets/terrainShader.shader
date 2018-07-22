@@ -4,7 +4,9 @@
 	{
 		// Color Input setup
 		_RockColor ("RockColor", Color) = (1,1,1,1)
+		_RockHighlightColor ("RockHighlightColor", Color) = (1,1,1,1)
 		_GrassColor ("GrassColor", Color) = (1,1,1,1)
+		_GrassHighlightColor ("GrassHighlightColor", Color) = (1,1,1,1)
 		_ImpactColor ("ImpactColor", Color) = (1,1,1,1)
 
 		// Texture Input setup
@@ -37,7 +39,9 @@
 		// declare variables used and link them
 		sampler2D _RockTex, _GrassTex, _ImpactTex;
 		fixed4 _RockColor;
+		fixed4 _RockHighlightColor;
 		fixed4 _GrassColor;
+		fixed4 _GrassHighlightColor;
 		fixed4 _ImpactColor;
 		float _TextureScale;
 		float _RockStart;
@@ -67,21 +71,31 @@
 		{
 			float3 worldPosition;
 			float3 worldNormal;
+			float3 blending;
 			fixed4 c;
 			fixed4 c2;
 			float2 UV;
 			float transitionFromGrassToRockPercent;
 
-			worldPosition = IN.worldPos;
+			worldPosition = abs(IN.worldPos);
 			worldNormal = IN.worldNormal;
 			UV = IN.uvRockColor;
 			UV = IN.worldPos.xy;
 
+			blending = normalize(max(worldNormal, 0.00001)); // Force weights to sum to 1.0
+			float b = (blending.x + blending.y + blending.z);
+			blending /= float3(b, b, b);
+
 			if (worldPosition.y > (_RockStart + _RockToGrassOverlap))
 			{
-				c = tex2D(_RockTex, UV * _TextureScale);
+				float4 xaxis = tex2D(_RockTex, worldPosition.yz * _TextureScale);
+				float4 yaxis = tex2D(_RockTex, worldPosition.xz * _TextureScale);
+				float4 zaxis = tex2D(_RockTex, worldPosition.xy * _TextureScale);
+
+				c = xaxis * blending.x + yaxis * blending.y + zaxis * blending.z;
+				//c = tex2D(_RockTex, UV * _TextureScale);
 				// set picked color as base
-				o.Albedo = _RockColor + c.rgb * _RockColor;
+				o.Albedo =  max(_RockColor, c.rgb * _RockHighlightColor);
 				/*
 				// set picked color as highlight
 				c.r = min(0.3, c.r);
@@ -103,10 +117,18 @@
 			}
 			else
 			{
-				c = tex2D(_GrassTex, UV * _TextureScale);
+				float4 xaxis = tex2D(_GrassTex, worldPosition.yz * _TextureScale);
+				float4 yaxis = tex2D(_GrassTex, worldPosition.xz * _TextureScale);
+				float4 zaxis = tex2D(_GrassTex, worldPosition.xy * _TextureScale);
+
+				c = xaxis * blending.x + yaxis * blending.y + zaxis * blending.z;
+				//c = tex2D(_RockTex, UV * _TextureScale);
+				// set picked color as base
+				o.Albedo = max(_GrassColor, c.rgb * _GrassHighlightColor);
+				//c = tex2D(_GrassTex, UV * _TextureScale);
 				//c += tex2D(_RockTex, UV * _TextureScale) * 1.0 - min(1.0, (1.0 / (_RockStart + _RockToGrassOverlap) * worldPosition.y));
 				// set picked color as base
-				o.Albedo = _GrassColor + c.rgb * _GrassColor;
+				//o.Albedo = _GrassColor + c.rgb * _GrassColor;
 				/*
 				// set picked color as highlight
 				c.r = min(0.3, c.r);

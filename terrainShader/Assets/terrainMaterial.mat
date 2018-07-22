@@ -78,7 +78,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RockStart: 138
+    - _RockStart: 126.22
     - _RockToGrassOverlap: 4
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -89,6 +89,8 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GrassColor: {r: 0.6647507, g: 0.8396226, b: 0.368325, a: 1}
+    - _GrassColor: {r: 0.48577192, g: 0.6037736, b: 0.20784314, a: 1}
+    - _GrassHighlightColor: {r: 0.6216441, g: 0.7830189, b: 0.23268957, a: 1}
     - _ImpactColor: {r: 0.754717, g: 0.48867217, b: 0.31683874, a: 1}
-    - _RockColor: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+    - _RockColor: {r: 0.18823531, g: 0.18823531, b: 0.18823531, a: 1}
+    - _RockHighlightColor: {r: 0.4056604, g: 0.4037469, b: 0.4037469, a: 1}
