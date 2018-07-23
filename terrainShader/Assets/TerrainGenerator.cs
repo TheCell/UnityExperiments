@@ -10,107 +10,36 @@ public class TerrainGenerator : MonoBehaviour
     public float length = 100.0f;
     public float height = 70.0f;
     public float worldHighlightScale = 0.03f;
-    private System.Random worldSeedGenerator = new System.Random();
     public int worldSeed;
+
+    private bool displayDebug = false;
+    private System.Random worldSeedGenerator = new System.Random();
     private MeshCollider objectMeshCollider;
+    private Vector3[] meshvertices;
+    private Vector2[] uv;
+    private int verticesForX;
+    private int verticesForY;
 
     // Use this for initialization
     void Start ()
     {
-        // create a meshCollider and save for later use
-        objectMeshCollider = GetComponent<MeshCollider>();
-        if (objectMeshCollider == null)
+        if (displayDebug)
         {
-            GameObject thisTerrain = gameObject;
-            thisTerrain.AddComponent<MeshCollider>();
-            objectMeshCollider = GetComponent<MeshCollider>();
+            print("worldSeed " + worldSeed);
+            print("tileCountX " + tileCountX + " tileCountY " + tileCountZ);
         }
-
-        bool displayDebug = false;
+        
         // init Worldseed and randomgen
         if (worldSeed == 0)
         {
             worldSeed = Random.Range(1, int.MaxValue);
         }
-        if (displayDebug)
-        {
-            print("worldSeed " + worldSeed);
-        }
         worldSeedGenerator = new System.Random(worldSeed);
-
-        if (displayDebug)
-        {
-            print("tileCountX " + tileCountX + " tileCountY " + tileCountZ);
-        }
-
-        // prepare Object for the terrain Mesh
-        MeshFilter meshFilter = null;
-        Mesh mesh = new Mesh();
-        meshFilter = GetComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
-
-        // generate the vertices and uv maps
-        int verticesForX = (tileCountX + 1);
-        int verticesForY = (tileCountZ + 1);
-        int vertexAmount = verticesForX * verticesForY;
-        Vector3[] vertices = new Vector3[vertexAmount];
-        Vector2[] uv = new Vector2[vertexAmount];
-        int xVertexNumber = 0;
-        int zVertexNumber = 0;
-        int perlinStartValueX = worldSeedGenerator.Next(0, 10000);
-        int perlinStartValueY = worldSeedGenerator.Next(0, 10000);
-
-        for (int i = 0; i < vertexAmount; i++)
-        {
-            float xPosition = xVertexNumber * (width / (tileCountX + 1));
-            float zPosition = zVertexNumber * (length / (tileCountZ + 1));
-            float xValuePerlin = perlinStartValueX + xVertexNumber * worldHighlightScale;
-            float yValuePerlin = perlinStartValueY - zVertexNumber * worldHighlightScale;
-            float yPosition = Mathf.PerlinNoise(xValuePerlin, yValuePerlin) * height;
-
-            vertices[i] = new Vector3(xPosition, yPosition, zPosition);
-            uv[i] = new Vector2(xPosition, zPosition);
-            if (displayDebug)
-            {
-                GameObject debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                debugSphere.name = "debugSphere";
-                debugSphere.GetComponent<Transform>().position = 
-                    new Vector3(
-                        transform.position.x + xPosition, 
-                        transform.position.y + 0, 
-                        transform.position.z + zPosition);
-                debugSphere.GetComponent<Transform>().localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                Material debugMaterial = new Material(Shader.Find("Standard"));
-                debugMaterial.color = new Color(1.0f, 0.7f, 0.0f);
-                debugSphere.GetComponent<MeshRenderer>().material = debugMaterial;
-            }
-
-            xVertexNumber++;
-            if (xVertexNumber > tileCountX)
-            {
-                xVertexNumber = 0;
-                zVertexNumber++;
-            }
-        }
         
-        mesh.vertices = vertices;
-        mesh.uv = uv;
-
-        // setup the triangles from the vertices
-        mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
-        mesh.normals = getMeshNormals(vertexAmount);
-        
-        // update collision Mesh
-        objectMeshCollider.sharedMesh = mesh;
+        initializeTerrain();
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 
-    int[] trianglesFromTiles(int tileCountX, int tileCountZ, bool showDebugLogs = false)
+    private int[] trianglesFromTiles(int tileCountX, int tileCountZ, bool showDebugLogs = false)
     {
         // every tile is built by 2 triangles
         int triangleAmount = tileCountX * tileCountZ * 2;
@@ -177,6 +106,82 @@ public class TerrainGenerator : MonoBehaviour
             normals[i] = -Vector3.forward;
         }
         return normals;
+    }
+
+    private void initializeTerrain()
+    {
+        // prepare Object for the terrain Mesh
+        MeshFilter meshFilter = null;
+        Mesh mesh = new Mesh();
+        meshFilter = GetComponent<MeshFilter>();
+        meshFilter.mesh = mesh;
+
+        // create a meshCollider and save for later use
+        setupMeshCollider();
+
+        // generate the vertices and uv maps
+        this.verticesForX = (tileCountX + 1);
+        this.verticesForY = (tileCountZ + 1);
+        int vertexAmount = verticesForX * verticesForY;
+        meshvertices = new Vector3[vertexAmount];
+        uv = new Vector2[vertexAmount];
+        int xVertexNumber = 0;
+        int zVertexNumber = 0;
+        int perlinStartValueX = worldSeedGenerator.Next(0, 10000);
+        int perlinStartValueY = worldSeedGenerator.Next(0, 10000);
+
+        for (int i = 0; i < vertexAmount; i++)
+        {
+            float xPosition = xVertexNumber * (width / (tileCountX + 1));
+            float zPosition = zVertexNumber * (length / (tileCountZ + 1));
+            float xValuePerlin = perlinStartValueX + xVertexNumber * worldHighlightScale;
+            float yValuePerlin = perlinStartValueY - zVertexNumber * worldHighlightScale;
+            float yPosition = Mathf.PerlinNoise(xValuePerlin, yValuePerlin) * height;
+
+            meshvertices[i] = new Vector3(xPosition, yPosition, zPosition);
+            uv[i] = new Vector2(xPosition, zPosition);
+            if (displayDebug)
+            {
+                GameObject debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                debugSphere.name = "debugSphere";
+                debugSphere.GetComponent<Transform>().position =
+                    new Vector3(
+                        transform.position.x + xPosition,
+                        transform.position.y + 0,
+                        transform.position.z + zPosition);
+                debugSphere.GetComponent<Transform>().localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                Material debugMaterial = new Material(Shader.Find("Standard"));
+                debugMaterial.color = new Color(1.0f, 0.7f, 0.0f);
+                debugSphere.GetComponent<MeshRenderer>().material = debugMaterial;
+            }
+
+            xVertexNumber++;
+            if (xVertexNumber > tileCountX)
+            {
+                xVertexNumber = 0;
+                zVertexNumber++;
+            }
+        }
+
+        mesh.vertices = meshvertices;
+        mesh.uv = uv;
+
+        // setup the triangles from the vertices
+        mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
+        mesh.normals = getMeshNormals(verticesForX * verticesForY);
+
+        // update collision Mesh
+        this.objectMeshCollider.sharedMesh = mesh;
+    }
+
+    private void setupMeshCollider()
+    {
+        this.objectMeshCollider = GetComponent<MeshCollider>();
+        if (this.objectMeshCollider == null)
+        {
+            gameObject.AddComponent<MeshCollider>();
+            this.objectMeshCollider = gameObject.GetComponent<MeshCollider>();
+        }
     }
 
     /*
