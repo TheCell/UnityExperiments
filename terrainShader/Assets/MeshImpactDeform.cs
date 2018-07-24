@@ -5,11 +5,18 @@ using UnityEngine;
 
 public class MeshImpactDeform : MonoBehaviour
 {
-    private MeshFilter terrainMesh;
+    private TerrainGenerator terrainGenerator;
+    private Vector3[] terrainVertices;
+    private int xVerticesCount;
+    private int yVerticesCount;
+    public float impactStrength = 10.0f;
 
     private void updateMeshData()
     {
-        terrainMesh = GetComponent<MeshFilter>();
+        if (this.terrainGenerator != null)
+        {
+            this.terrainGenerator.setVertices(terrainVertices);
+        }
     }
 
     private GameObject createSphereAt(Vector3 point)
@@ -48,8 +55,102 @@ public class MeshImpactDeform : MonoBehaviour
 
     public void impact(Collision collision)
     {
-        updateMeshData();
+        initializeVariables();
         displayImpact(collision);
+        applyImpact(collision);
+        updateMeshData();
+    }
+
+    private void applyImpact(Collision collision)
+    {
+        Vector3 collisionPoint = collision.contacts[0].point;
+        Vector3 collisionNormal = collision.contacts[0].normal;
+        Debug.Log("indexes are not correct at the moment");
+        int closestIndexes = findClosestVertexIndex(collisionPoint);
+        if (closestIndexes == -1)
+        {
+            print("vertex index not found");
+            return;
+        }
+        print("closestIndexes " + closestIndexes);
+        Vector3 imapctVector = collisionNormal * this.impactStrength;
+        Vector3 impactVertex = this.terrainVertices[closestIndexes];
+
+        impactVertex = impactVertex + imapctVector;
+        this.terrainVertices[closestIndexes] = impactVertex;
+    }
+
+    private int findClosestVertexIndex(Vector3 point)
+    {
+        // x,z is the unity plane. find closest vertex in array
+        return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+    }
+
+    private int findClosestXIndex(Vector3 point)
+    {
+        int index = -1;
+        float currentClosestDistance = float.MaxValue;
+
+        for (int i = 0; i < this.xVerticesCount; i++)
+        {
+            float pointDistanceToCurrentVertex = Mathf.Abs(this.terrainVertices[i].x - point.x);
+            if (pointDistanceToCurrentVertex < currentClosestDistance)
+            {
+                index = i;
+                currentClosestDistance = pointDistanceToCurrentVertex;
+            }
+        }
+
+        return index;
+    }
+
+    private int findClosestZIndex(Vector3 point)
+    {
+        int index = -1;
+        float currentClosestDistance = float.MaxValue;
+
+        for (int i = 0; i < this.yVerticesCount; i++)
+        {
+            float pointDistanceToCurrentVertex = Mathf.Abs(this.terrainVertices[i * this.xVerticesCount].z - point.z);
+            if (pointDistanceToCurrentVertex < currentClosestDistance)
+            {
+                index = i;
+                currentClosestDistance = pointDistanceToCurrentVertex;
+            }
+        }
+
+        return index;
+    }
+
+    private bool initializeVerticeData()
+    {
+        if (this.terrainGenerator != null)
+        {
+            this.terrainVertices = terrainGenerator.getVertices();
+            this.xVerticesCount = terrainGenerator.getXVerticesCount();
+            this.yVerticesCount = terrainGenerator.getYVerticesCount();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void initializeVariables()
+    {
+        this.terrainGenerator = GetComponent<TerrainGenerator>();
+        if (this.terrainGenerator != null)
+        {
+            if (!initializeVerticeData())
+            {
+                print("Data could not be loaded, something went wrong with the terrainGenerator");
+            }
+        }
+        else
+        {
+            print("this collision Object has no terrainGenerator script");
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -57,4 +158,6 @@ public class MeshImpactDeform : MonoBehaviour
         print("collision impact at " + collision.contacts[0].point);
         impact(collision);
     }
+
+
 }
