@@ -15,27 +15,29 @@ public class TerrainGenerator : MonoBehaviour
     private bool displayDebug = false;
     private System.Random worldSeedGenerator = new System.Random();
     private MeshCollider objectMeshCollider;
-    private Vector3[] meshvertices;
+    private Vector3[] meshVertices;
     private Vector2[] uv;
+    private Mesh mesh;
+    private MeshFilter meshFilter;
     private int verticesForX;
     private int verticesForY;
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         if (displayDebug)
         {
             print("worldSeed " + worldSeed);
             print("tileCountX " + tileCountX + " tileCountY " + tileCountZ);
         }
-        
+
         // init Worldseed and randomgen
         if (worldSeed == 0)
         {
             worldSeed = Random.Range(1, int.MaxValue);
         }
         worldSeedGenerator = new System.Random(worldSeed);
-        
+
         initializeTerrain();
     }
 
@@ -111,8 +113,8 @@ public class TerrainGenerator : MonoBehaviour
     private void initializeTerrain()
     {
         // prepare Object for the terrain Mesh
-        MeshFilter meshFilter = null;
-        Mesh mesh = new Mesh();
+        this.meshFilter = null;
+        this.mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = mesh;
 
@@ -123,8 +125,8 @@ public class TerrainGenerator : MonoBehaviour
         this.verticesForX = (tileCountX + 1);
         this.verticesForY = (tileCountZ + 1);
         int vertexAmount = verticesForX * verticesForY;
-        meshvertices = new Vector3[vertexAmount];
-        uv = new Vector2[vertexAmount];
+        this.meshVertices = new Vector3[vertexAmount];
+        this.uv = new Vector2[vertexAmount];
         int xVertexNumber = 0;
         int zVertexNumber = 0;
         int perlinStartValueX = worldSeedGenerator.Next(0, 10000);
@@ -138,8 +140,8 @@ public class TerrainGenerator : MonoBehaviour
             float yValuePerlin = perlinStartValueY - zVertexNumber * worldHighlightScale;
             float yPosition = Mathf.PerlinNoise(xValuePerlin, yValuePerlin) * height;
 
-            meshvertices[i] = new Vector3(xPosition, yPosition, zPosition);
-            uv[i] = new Vector2(xPosition, zPosition);
+            meshVertices[i] = new Vector3(xPosition, yPosition, zPosition);
+            this.uv[i] = new Vector2(xPosition, zPosition);
             if (displayDebug)
             {
                 GameObject debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -163,15 +165,9 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
 
-        mesh.vertices = meshvertices;
-        mesh.uv = uv;
+        updateMeshInfo(meshVertices, uv);
 
-        // setup the triangles from the vertices
-        mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
-        mesh.normals = getMeshNormals(verticesForX * verticesForY);
-
-        // update collision Mesh
-        this.objectMeshCollider.sharedMesh = mesh;
+        updateMeshCollider();
     }
 
     private void setupMeshCollider()
@@ -182,6 +178,47 @@ public class TerrainGenerator : MonoBehaviour
             gameObject.AddComponent<MeshCollider>();
             this.objectMeshCollider = gameObject.GetComponent<MeshCollider>();
         }
+    }
+
+    private void updateMeshInfo(Vector3[] meshvertices, Vector2[] uv)
+    {
+        this.meshVertices = meshvertices;
+        this.uv = uv;
+
+        this.mesh.vertices = this.meshVertices;
+        this.mesh.uv = this.uv;
+
+        // setup the triangles from the vertices
+        this.mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
+        this.mesh.normals = getMeshNormals(verticesForX * verticesForY);
+    }
+
+    private void updateMeshCollider()
+    {
+        // update collision Mesh
+        this.objectMeshCollider.sharedMesh = this.mesh;
+    }
+
+    public void setVertices(Vector3[] newVertices)
+    {
+        // not changing uv's
+        updateMeshInfo(newVertices, this.uv);
+        updateMeshCollider();
+    }
+
+    public Vector3[] getVertices()
+    {
+        return this.meshVertices;
+    }
+
+    public int getXVerticesCount()
+    {
+        return this.verticesForX;
+    }
+
+    public int getYVerticesCount()
+    {
+        return this.verticesForY;
     }
 
     /*
