@@ -65,25 +65,44 @@ public class MeshImpactDeform : MonoBehaviour
     {
         Vector3 collisionPoint = collision.contacts[0].point;
         Vector3 collisionNormal = collision.contacts[0].normal;
-        Debug.Log("indexes are not correct at the moment");
         int closestIndexes = findClosestVertexIndex(collisionPoint);
         if (closestIndexes == -1)
         {
             print("vertex index not found");
             return;
         }
-        print("closestIndexes " + closestIndexes);
         Vector3 imapctVector = collisionNormal * this.impactStrength;
         Vector3 impactVertex = this.terrainVertices[closestIndexes];
 
         impactVertex = impactVertex + imapctVector;
+        impactVertex.y = 180;
         this.terrainVertices[closestIndexes] = impactVertex;
     }
 
     private int findClosestVertexIndex(Vector3 point)
     {
         // x,z is the unity plane. find closest vertex in array
-        return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+        // return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+        Debug.Log("temporary slow function, something else seems to be off");
+
+        int vertexAmount = this.xVerticesCount * this.yVerticesCount;
+        int index = -1;
+        float currentClosestDistance = float.MaxValue;
+
+        for (int i = 0; i < vertexAmount; i++)
+        {
+            float pointDistanceToCurrentVertex = 
+                Mathf.Abs(this.terrainVertices[i].x - point.x)
+                + Mathf.Abs(this.terrainVertices[i].y - point.y)
+                + Mathf.Abs(this.terrainVertices[i].z - point.z);
+            if (pointDistanceToCurrentVertex < currentClosestDistance)
+            {
+                currentClosestDistance = pointDistanceToCurrentVertex;
+                index = i;
+            }
+        }
+
+        return index;
     }
 
     private int findClosestXIndex(Vector3 point)
@@ -106,6 +125,7 @@ public class MeshImpactDeform : MonoBehaviour
 
     private int findClosestZIndex(Vector3 point)
     {
+        Debug.Log("this is still not working. seems to have the wrong scale??");
         int index = -1;
         float currentClosestDistance = float.MaxValue;
 
@@ -155,8 +175,9 @@ public class MeshImpactDeform : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        print("collision impact at " + collision.contacts[0].point);
+        //print("collision impact at " + collision.contacts[0].point);
         impact(collision);
+        Destroy(collision.gameObject);
     }
 
 

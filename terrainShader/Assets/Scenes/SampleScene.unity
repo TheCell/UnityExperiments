@@ -349,6 +349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8636085c2d290a545bf12c07ee75792a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  impactStrength: 10
 --- !u!1 &1558363506
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,9 +536,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileCountX: 200
-  tileCountZ: 200
+  tileCountZ: 300
   width: 100
-  length: 100
+  length: 150
   height: 70
   worldHighlightScale: 0.03
   worldSeed: 0
@@ -563,3 +564,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8636085c2d290a545bf12c07ee75792a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  impactStrength: 10

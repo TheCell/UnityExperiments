@@ -134,8 +134,8 @@ public class TerrainGenerator : MonoBehaviour
 
         for (int i = 0; i < vertexAmount; i++)
         {
-            float xPosition = xVertexNumber * (width / (tileCountX + 1));
-            float zPosition = zVertexNumber * (length / (tileCountZ + 1));
+            float xPosition = xVertexNumber * (width / this.verticesForX);
+            float zPosition = zVertexNumber * (length / this.verticesForY);
             float xValuePerlin = perlinStartValueX + xVertexNumber * worldHighlightScale;
             float yValuePerlin = perlinStartValueY - zVertexNumber * worldHighlightScale;
             float yPosition = Mathf.PerlinNoise(xValuePerlin, yValuePerlin) * height;
@@ -158,7 +158,7 @@ public class TerrainGenerator : MonoBehaviour
             }
 
             xVertexNumber++;
-            if (xVertexNumber > tileCountX)
+            if (xVertexNumber >= this.verticesForX)
             {
                 xVertexNumber = 0;
                 zVertexNumber++;
@@ -190,7 +190,7 @@ public class TerrainGenerator : MonoBehaviour
 
         // setup the triangles from the vertices
         this.mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
-        this.mesh.normals = getMeshNormals(verticesForX * verticesForY);
+        this.mesh.normals = getMeshNormals(this.verticesForX * this.verticesForY);
     }
 
     private void updateMeshCollider()
