@@ -541,7 +541,7 @@ MonoBehaviour:
   length: 150
   height: 70
   worldHighlightScale: 0.03
-  worldSeed: 10
+  worldSeed: 0
 --- !u!114 &1859076889
 MonoBehaviour:
   m_ObjectHideFlags: 0

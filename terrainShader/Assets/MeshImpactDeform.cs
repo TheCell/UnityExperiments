@@ -75,27 +75,31 @@ public class MeshImpactDeform : MonoBehaviour
         Vector3 impactVertex = this.terrainVertices[closestIndexes];
 
         impactVertex = impactVertex + imapctVector;
-        impactVertex.y = 180;
         this.terrainVertices[closestIndexes] = impactVertex;
     }
 
     private int findClosestVertexIndex(Vector3 point)
     {
+        Vector3 terrainOffset = gameObject.transform.position;
         // x,z is the unity plane. find closest vertex in array
-        return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+        return findClosestXIndex(point - terrainOffset) + (findClosestZIndex(point - terrainOffset) * this.xVerticesCount);
 
-        Debug.Log("temporary slow function, something else seems to be off");
-
+        /*
+        // going through the whole array
+        terrainOffset = gameObject.transform.position;
         int vertexAmount = this.xVerticesCount * this.yVerticesCount;
         int index = -1;
         float currentClosestDistance = float.MaxValue;
 
         for (int i = 0; i < vertexAmount; i++)
         {
-            float pointDistanceToCurrentVertex = 
-                Mathf.Abs(this.terrainVertices[i].x - point.x)
-                + Mathf.Abs(this.terrainVertices[i].y - point.y)
-                + Mathf.Abs(this.terrainVertices[i].z - point.z);
+            float pointDistanceToCurrentVertex = Vector3.Distance(this.terrainVertices[i] + terrainOffset, point);
+
+            //float pointDistanceToCurrentVertex = 
+            //Mathf.Abs(this.terrainVertices[i].x - point.x)
+            //+ Mathf.Abs(this.terrainVertices[i].y - point.y)
+            //+Mathf.Abs(this.terrainVertices[i].z - point.z);
+
             if (pointDistanceToCurrentVertex < currentClosestDistance)
             {
                 currentClosestDistance = pointDistanceToCurrentVertex;
@@ -103,7 +107,9 @@ public class MeshImpactDeform : MonoBehaviour
             }
         }
 
+
         return index;
+        */
     }
 
     private int findClosestXIndex(Vector3 point)
