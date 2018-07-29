@@ -82,7 +82,8 @@ public class MeshImpactDeform : MonoBehaviour
     private int findClosestVertexIndex(Vector3 point)
     {
         // x,z is the unity plane. find closest vertex in array
-        // return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+        return findClosestXIndex(point) + (findClosestZIndex(point) * this.xVerticesCount);
+
         Debug.Log("temporary slow function, something else seems to be off");
 
         int vertexAmount = this.xVerticesCount * this.yVerticesCount;
@@ -132,6 +133,10 @@ public class MeshImpactDeform : MonoBehaviour
         for (int i = 0; i < this.yVerticesCount; i++)
         {
             float pointDistanceToCurrentVertex = Mathf.Abs(this.terrainVertices[i * this.xVerticesCount].z - point.z);
+            /*
+            Debug.Log("let's set every z to 180");
+            this.terrainVertices[i * this.xVerticesCount].z = 180;
+            */
             if (pointDistanceToCurrentVertex < currentClosestDistance)
             {
                 index = i;

@@ -100,12 +100,58 @@ public class TerrainGenerator : MonoBehaviour
         return trianglePoints;
     }
 
-    Vector3[] getMeshNormals(int vertexAmount)
+    Vector3[] getMeshNormals()
     {
+        int vertexAmount = this.verticesForX * this.verticesForY;
         Vector3[] normals = new Vector3[vertexAmount];
+
+        // Problems: All Edges
+        int counterForX = 0;
+        int counterForY = 0;
         for (int i = 0; i < vertexAmount; i++)
         {
-            normals[i] = -Vector3.forward;
+            bool isLeftOrRightBorder = i % this.verticesForX == 0;
+            bool isFirstOrLastLine = i < this.verticesForX || i > vertexAmount - this.verticesForX;
+            if (!isLeftOrRightBorder && !isFirstOrLastLine)
+            {
+                // Von Neumann neighborhood for normals
+                int indexTop = i - this.verticesForX;
+                //int indexBottom = i + this.verticesForX;
+                //int indexRight = i + 1;
+                int indexLeft = i - 1;
+                Vector3 vectorTopI;
+                Vector3 vectorLeftI;
+                Vector3 the4Points;
+
+                vectorTopI = this.meshVertices[indexTop] - this.meshVertices[i];
+                vectorLeftI = this.meshVertices[indexLeft] - this.meshVertices[i];
+                the4Points = Vector3.Cross(vectorTopI, vectorLeftI);
+                the4Points = Vector3.Normalize(the4Points);
+
+                /*
+                // interesting visuals
+                the4Points =
+                    this.meshVertices[indexTop] 
+                    + this.meshVertices[indexBottom] 
+                    + this.meshVertices[indexLeft] 
+                    + this.meshVertices[indexRight];
+                the4Points /= 4;
+                the4Points = Vector3.Normalize(the4Points);
+                */
+                normals[i] = the4Points;
+            }
+            else
+            {
+                // still TODO
+                normals[i] = Vector3.Normalize(normals[i]);
+            }
+
+            counterForX ++;
+            if (counterForX >= this.verticesForX)
+            {
+                counterForX = 0;
+                counterForY++;
+            }
         }
         return normals;
     }
@@ -190,7 +236,7 @@ public class TerrainGenerator : MonoBehaviour
 
         // setup the triangles from the vertices
         this.mesh.triangles = trianglesFromTiles(tileCountX, tileCountZ, displayDebug);
-        this.mesh.normals = getMeshNormals(this.verticesForX * this.verticesForY);
+        this.mesh.normals = getMeshNormals();
     }
 
     private void updateMeshCollider()
