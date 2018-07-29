@@ -56,7 +56,7 @@ public class MeshImpactDeform : MonoBehaviour
     public void impact(Collision collision)
     {
         initializeVariables();
-        displayImpact(collision);
+        //displayImpact(collision);
         applyImpact(collision);
         updateMeshData();
     }
@@ -132,17 +132,12 @@ public class MeshImpactDeform : MonoBehaviour
 
     private int findClosestZIndex(Vector3 point)
     {
-        Debug.Log("this is still not working. seems to have the wrong scale??");
         int index = -1;
         float currentClosestDistance = float.MaxValue;
 
         for (int i = 0; i < this.yVerticesCount; i++)
         {
             float pointDistanceToCurrentVertex = Mathf.Abs(this.terrainVertices[i * this.xVerticesCount].z - point.z);
-            /*
-            Debug.Log("let's set every z to 180");
-            this.terrainVertices[i * this.xVerticesCount].z = 180;
-            */
             if (pointDistanceToCurrentVertex < currentClosestDistance)
             {
                 index = i;
