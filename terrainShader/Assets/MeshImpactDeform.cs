@@ -9,7 +9,7 @@ public class MeshImpactDeform : MonoBehaviour
     private Vector3[] terrainVertices;
     private int xVerticesCount;
     private int yVerticesCount;
-    public float impactStrength = 10.0f;
+    public float impactStrength = 1.0f;
 
     private void updateMeshData()
     {
@@ -63,19 +63,10 @@ public class MeshImpactDeform : MonoBehaviour
 
     private void applyImpact(Collision collision)
     {
+        Vector3 impactVector = this.impactStrength * collision.impulse;
         Vector3 collisionPoint = collision.contacts[0].point;
-        Vector3 collisionNormal = collision.contacts[0].normal;
         int closestIndexes = findClosestVertexIndex(collisionPoint);
-        if (closestIndexes == -1)
-        {
-            print("vertex index not found");
-            return;
-        }
-        Vector3 imapctVector = collisionNormal * this.impactStrength;
-        Vector3 impactVertex = this.terrainVertices[closestIndexes];
-
-        impactVertex = impactVertex + imapctVector;
-        this.terrainVertices[closestIndexes] = impactVertex;
+        this.terrainVertices[closestIndexes] = this.terrainVertices[closestIndexes] - impactVector;
     }
 
     private int findClosestVertexIndex(Vector3 point)
@@ -179,12 +170,10 @@ public class MeshImpactDeform : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         //print("collision impact at " + collision.contacts[0].point);
         impact(collision);
         Destroy(collision.gameObject);
     }
-
-
 }
