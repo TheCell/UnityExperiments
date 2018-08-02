@@ -9,7 +9,9 @@ public class MeshImpactDeform : MonoBehaviour
     private Vector3[] terrainVertices;
     private int xVerticesCount;
     private int yVerticesCount;
+    private Dictionary<int, float> impactStampIndexAndStrength; // HashMap in Java
     public float impactStrength = 1.0f;
+    public int impactSize = 3;
 
     private void updateMeshData()
     {
@@ -63,10 +65,10 @@ public class MeshImpactDeform : MonoBehaviour
 
     private void applyImpact(Collision collision)
     {
-        Vector3 impactVector = this.impactStrength * collision.impulse;
         Vector3 collisionPoint = collision.contacts[0].point;
         int closestIndexes = findClosestVertexIndex(collisionPoint);
-        this.terrainVertices[closestIndexes] = this.terrainVertices[closestIndexes] - impactVector;
+        setImpactSize(closestIndexes);
+        applyImpactToSize(collision.impulse, closestIndexes);
     }
 
     private int findClosestVertexIndex(Vector3 point)
@@ -168,6 +170,104 @@ public class MeshImpactDeform : MonoBehaviour
         {
             print("this collision Object has no terrainGenerator script");
         }
+    }
+
+    // create a dictionary with all indices that are affected, scaling the outward impact strength down
+    private void setImpactSize(int index)
+    {
+        this.impactStampIndexAndStrength = new Dictionary<int, float>();
+        this.impactStampIndexAndStrength[index] = this.impactStrength;
+
+        // for every previous entry we expand it top, right, bottom, left in a cross pattern.
+        // duplicates are ignored
+        for (int i = 0; i < this.impactSize; i++)
+        {
+            Dictionary<int, float> temporaryDictionary = new Dictionary<int, float>(this.impactStampIndexAndStrength);
+            Dictionary<int, float>.Enumerator enumerator = this.impactStampIndexAndStrength.GetEnumerator();
+
+            while(enumerator.MoveNext())
+            {
+                KeyValuePair<int, float> currentPair = enumerator.Current;
+                addPairsAsCrossIfNotExists(currentPair, temporaryDictionary);
+            }
+
+            this.impactStampIndexAndStrength = temporaryDictionary;
+        }
+    }
+
+    private void applyImpactToSize(Vector3 impulse, int middlePointIndex)
+    {
+        foreach(KeyValuePair<int, float> kvPair in this.impactStampIndexAndStrength)
+        {
+            if (isAppropriateIndex(kvPair.Key, middlePointIndex))
+            {
+                Vector3 impactVector = kvPair.Value * impulse;
+                this.terrainVertices[kvPair.Key] = this.terrainVertices[kvPair.Key] - impactVector;
+            }
+        }
+    }
+
+    private void addPairsAsCrossIfNotExists(KeyValuePair<int, float> middlePoint, Dictionary<int, float> dictionary)
+    {
+        // index to the right
+        int otherIndex = middlePoint.Key + 1;
+        if (!dictionary.ContainsKey(otherIndex))
+        {
+            dictionary[otherIndex] = getReducedImpactStrength(middlePoint.Value);
+        }
+        
+        // index to the left
+        otherIndex = middlePoint.Key - 1;
+        if (!dictionary.ContainsKey(otherIndex))
+        {
+            dictionary[otherIndex] = getReducedImpactStrength(middlePoint.Value);
+        }
+        
+        // index to the top
+        otherIndex = middlePoint.Key - this.xVerticesCount;
+        if (!dictionary.ContainsKey(otherIndex))
+        {
+            dictionary[otherIndex] = getReducedImpactStrength(middlePoint.Value);
+        }
+        
+        // index to the bottom
+        otherIndex = middlePoint.Key + this.xVerticesCount;
+        if (!dictionary.ContainsKey(otherIndex))
+        {
+            dictionary[otherIndex] = getReducedImpactStrength(middlePoint.Value);
+        }
+    }
+
+    private float getReducedImpactStrength(float currentStrength)
+    {
+        return currentStrength * 0.7f;
+    }
+
+    private bool isAppropriateIndex(int index, int middlepointIndex)
+    {
+        bool isAppropriate = true;
+
+        // check array bound
+        if (index > this.terrainVertices.Length -1 || index < 0)
+        {
+            isAppropriate = false;
+        }
+
+        int relativeMiddlePointIndex = middlepointIndex % this.xVerticesCount;
+        
+        // detect edge oversteps on the left side
+        if (index % this.xVerticesCount > relativeMiddlePointIndex + this.impactSize)
+        {
+            isAppropriate = false;
+        }
+
+        // detect edge oversteps on the right side
+        if (index % this.xVerticesCount < relativeMiddlePointIndex - this.impactSize)
+        {
+            isAppropriate = false;
+        }
+
+        return isAppropriate;
     }
 
     public void OnCollisionEnter(Collision collision)
