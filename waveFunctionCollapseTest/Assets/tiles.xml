@@ -1,9 +1,9 @@
 <set>
   <tiles>
-<tile name="Assets/PalettePrefabs/Cube" symmetry="X" weight="1.0"/>
-<tile name="Assets/PalettePrefabs/Sphere" symmetry="X" weight="1.0"/>
+<tile name="Assets/PalettePrefabs/floorFull" symmetry="X" weight="1.0"/>
+<tile name="Assets/PalettePrefabs/stairs" symmetry="X" weight="1.0"/>
 	</tiles>
-<neighbors>  <neighbor left="Assets/PalettePrefabs/Cube 0" right="Assets/PalettePrefabs/Cube 0"/>
-  <neighbor left="Assets/PalettePrefabs/Cube 1" right="Assets/PalettePrefabs/Cube 1"/>
+<neighbors>  <neighbor left="Assets/PalettePrefabs/floorFull 0" right="Assets/PalettePrefabs/floorFull 0"/>
+  <neighbor left="Assets/PalettePrefabs/floorFull 0" right="Assets/PalettePrefabs/stairs 0"/>
 	</neighbors>
 </set>
