@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ToonShader
+  m_Shader: {fileID: -6465566751694194690, guid: 353f15e00d137094999e76defe2a2e3e,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Floats:
+    - Vector1_20220ADE: 0.589
+    - Vector1_26491C18: 0.209
+    - Vector1_6BE96A10: 0.03
+    - Vector1_8D035228: 0.021
+    - Vector1_B9A94118: 0.081
+    - Vector1_E1C9627E: 0.05
+    m_Colors:
+    - Color_4316493D: {r: 1, g: 1, b: 1, a: 0}
+    - Color_6D083859: {r: 0.40525448, g: 0.8301887, b: 0.09789956, a: 0}
+    - Color_7ECE6364: {r: 0.8103222, g: 0.9215686, b: 0.6699804, a: 1}
+    - Color_ADBC5BC4: {r: 0.17381477, g: 0.6603774, b: 0.121484466, a: 1}
