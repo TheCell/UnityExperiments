@@ -6,6 +6,7 @@ public class melting : MonoBehaviour
 {
 	private Material candleMaterial;
 	[SerializeField] private Transform flamePos;
+	[SerializeField] private float secondsToMelt = 3.0f;
 	private float amount;
 	public Transform flameStartPos;
 	public Transform flameEndPos;
@@ -21,7 +22,7 @@ public class melting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		amount = 1 - (Time.timeSinceLevelLoad / 3) % 1;
+		amount = 1 - (Time.timeSinceLevelLoad / secondsToMelt) % 1;
 		candleMaterial.SetFloat("_Amount", amount);
 		if (flamePos != null)
 		{
