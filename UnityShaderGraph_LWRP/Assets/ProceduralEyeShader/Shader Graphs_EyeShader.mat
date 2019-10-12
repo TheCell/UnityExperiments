@@ -21,18 +21,28 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _IrisTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 2ec6e1532acb1254f9f3797b5d82db44, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Distort: 0.5
+    - _EdgeWidth: 0.1
     - _IrisScaleX: 1
     - _IrisScaleY: 1
+    - _PupilScaleX: 0.5
+    - _PupilScaleY: 0.5
     - _Radius: 0.4
+    - _RadiusPupil: 0.1
     - _Scale: 10
+    - _SpecSize: 0.457
     - _Speed: 0
     - _Texture: 0
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Color: {r: 1, g: 0.6650944, b: 0.6650944, a: 0}
+    - _CustomLightDirection: {r: 7, g: 12, b: 0, a: 0}
+    - _IrisColor: {r: 0, g: 0, b: 0, a: 1}
     - _IrisColorOut: {r: 0, g: 1, b: 0, a: 1}
+    - _IrisEdgeColor: {r: 0, g: 0, b: 0, a: 1}
     - _IrisTexColor: {r: 1, g: 0, b: 0, a: 1}
+    - _PupilColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
+    - _PupilColorOut: {r: 0, g: 0, b: 1, a: 1}
