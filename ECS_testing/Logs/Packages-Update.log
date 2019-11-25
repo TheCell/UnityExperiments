@@ -1,0 +1,30 @@
+
+=== Mon Nov 25 22:53:49 2019
+
+Packages were changed.
+Update Mode: mergeDefaultDependencies
+
+The following packages were updated:
+  com.unity.ide.rider from version 1.0.4 to 1.1.0
+  com.unity.ide.vscode from version 1.0.4 to 1.1.0
+
+=== Mon Nov 25 23:16:22 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.1.0 to 1.1.2
+
+=== Tue Nov 26 00:28:35 2019
+
+Packages were changed.
+Update Mode: resetToDefaultDependencies
+
+The following packages were removed:
+  com.unity.2d.sprite@1.0.0
+  com.unity.2d.tilemap@1.0.0
+  com.unity.ads@2.0.8
+  com.unity.analytics@3.3.2
+  com.unity.purchasing@2.0.6
+  com.unity.render-pipelines.lightweight@6.9.0
