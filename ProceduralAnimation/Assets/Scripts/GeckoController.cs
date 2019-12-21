@@ -48,10 +48,10 @@ public class GeckoController : MonoBehaviour
 		);
 
 		// Get the local rotation by using LookRotation on a local directional vector
-		Quaternion targetLocalRotation = Quaternion.LookRotation(targetLocalLookDir, transform.up);
+		Quaternion targetLocalRotation = Quaternion.LookRotation(targetLocalLookDir, Vector3.up);
 
 		// Apply smoothing
-		headBone.rotation = Quaternion.Slerp(
+		headBone.localRotation = Quaternion.Slerp(
 			currentLocalRotation,
 			targetLocalRotation,
 			1 - Mathf.Exp(-headTrackingSpeed * Time.deltaTime)
@@ -112,4 +112,5 @@ public class GeckoController : MonoBehaviour
 			rightEyeBone.localEulerAngles.z
 		);
 	}
+
 }
