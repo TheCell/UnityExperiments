@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d563e55b49ca50e43aa80729a44ce5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonFilePathAndFile: Assets/Webview/Data/jsontest.json
+  jsonFilePathAndFile: Assets/SceneToJson/Webview/Data/jsontest.json
 --- !u!65 &1945078582
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ using System.IO;
 public class DataToJson : MonoBehaviour
 {
     [SerializeField] string jsonFilePathAndFile;
+    [SerializeField] float timeBetweenWrites = 1f;
     float lastWriteTime = 0f;
 
     private void Start()
@@ -16,7 +17,7 @@ public class DataToJson : MonoBehaviour
 
     private void Update()
     {
-        if (lastWriteTime + 3 < Time.realtimeSinceStartup)
+        if (lastWriteTime + timeBetweenWrites < Time.realtimeSinceStartup)
         {
             WriteJson();
             lastWriteTime = Time.realtimeSinceStartup;
