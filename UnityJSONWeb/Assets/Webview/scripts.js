@@ -2,7 +2,6 @@
 let hexagonRadius = 5;
 let elementsPerRow = 100;
 
-
 function createElements(elements)
 {
 	//console.log(elements.target.response);
@@ -10,6 +9,7 @@ function createElements(elements)
 	// Assuming you get an array of objects.
 	elements = JSON.parse(elements.target.response);
 	let infoDiv = document.getElementById("infos");
+	infoDiv.innerHTML = "";
 	let numberOfRows = elements.vertexPositions.length % elementsPerRow;
 	let numberOfColumns = elements.vertexPositions.length / numberOfRows;
 	let heatmapHeight = (numberOfRows + 1/3) * 3/2 * hexagonRadius;
@@ -37,6 +37,7 @@ function createElements(elements)
 		temperatures[i] = "rgb( 255, " + Math.round(elements.temperatures[i] * 255) + ", 0)";
 	}
 
+	document.getElementById("graph").innerHTML = "";
 	let svg = d3.select("#graph")
 				.append("svg")
 				.attr("width", heatmapHeight)
@@ -78,7 +79,18 @@ function createElements(elements)
 	*/
 }
 
-let request = new XMLHttpRequest();
-request.onload = createElements;
-request.open("GET", "Data/jsontest.json", true);
-request.send();
+function reloadData()
+{
+	setTimeout(
+		function ()
+		{
+			let request = new XMLHttpRequest();
+			request.onload = createElements;
+			request.open("GET", "Data/jsontest.json", true);
+			request.send();
+			console.log("noice");
+			reloadData();
+		}, 1000);
+}
+
+reloadData();
