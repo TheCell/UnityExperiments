@@ -80,5 +80,5 @@ function createElements(elements)
 
 let request = new XMLHttpRequest();
 request.onload = createElements;
-request.open("GET", "jsontest.json", true);
+request.open("GET", "Data/jsontest.json", true);
 request.send();

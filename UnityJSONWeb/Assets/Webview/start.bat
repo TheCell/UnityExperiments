@@ -1,1 +1,1 @@
-live-server
+live-server --ignore=Data/* ./
