@@ -1,0 +1,8 @@
+Color Picker tools:
+https://material.io/resources/color/
+http://paletton.com/
+https://flatuicolors.com/
+http://khroma.co/
+
+UI build based on Game Dev Guide Videos:
+https://www.youtube.com/watch?v=HwdweCX5aMI
