@@ -6,11 +6,12 @@ public class FKChain : MonoBehaviour
 {
 	[SerializeField] private Transform trackdot;
 	[SerializeField] private Joint[] joints;
-	private float samplingDistance;
-	private float learningRate;
-	private float distanceThreshold;
+	private float deltaAngleToTestWith = 5f;
+	private float learningRate = 2.1f;
+	private float distanceThreshold = 0.1f;
 	private float[] angles;
 	private float testangle = 0f;
+	private int debugCounter = 0;
 
 	private void Start()
 	{
@@ -19,18 +20,18 @@ public class FKChain : MonoBehaviour
 		for (int i = 0; i < joints.Length; i++)
 		{
 			float angle = 0f;
-			if (joints[i].localAxis == Vector3.right)
-			{
-				angle = joints[i].transform.eulerAngles.x;
-			}
-			else if (joints[i].localAxis == Vector3.up)
-			{
-				angle = joints[i].transform.eulerAngles.y;
-			}
-			else
-			{
-				angle = joints[i].transform.eulerAngles.z;
-			}
+			//if (joints[i].localAxis == Vector3.right)
+			//{
+			//	angle = joints[i].transform.eulerAngles.x;
+			//}
+			//else if (joints[i].localAxis == Vector3.up)
+			//{
+			//	angle = joints[i].transform.eulerAngles.y;
+			//}
+			//else
+			//{
+			//	angle = joints[i].transform.eulerAngles.z;
+			//}
 
 			angles[i] = angle;
 		}
@@ -40,14 +41,19 @@ public class FKChain : MonoBehaviour
 	{
 		DrawOffsets();
 		Gizmos.color = Color.red;
-		Gizmos.DrawSphere(transform.TransformPoint(ForwardKinematicsLocalPos()), 1f);
+		Gizmos.DrawSphere(ForwardKinematics(angles), 1f);
 	}
 
 	private void Update()
 	{
-		TestAngles(testangle);
-		testangle++;
-		//InverseKinematics(trackdot.position, angles);
+		//Debug.Log(angles[1]);
+		//TestAngles(testangle);
+		//testangle++;
+		//if (debugCounter % 10 == 0)
+		//{
+		//}
+		//debugCounter++;
+		InverseKinematics();
 
 		//for (int i = 0; i < angles.Length; i++)
 		//{
@@ -56,58 +62,57 @@ public class FKChain : MonoBehaviour
 		//UpdatedLocalAngles();
 	}
 
-	//private void SetOffsets()
-	//{
-	//	Vector3 previousPosition = transform.position;
-
-	//	for (int i = 0; i < joints.Length; i++)
-	//	{
-	//		Vector3 currentPos = joints[i].transform.position;
-	//		joints[i].StartOffset = currentPos - previousPosition;
-	//	}
-	//}
-
 	// every joint can only rotate around one local axis
-	//public void InverseKinematics(Vector3 target, float[] angles)
-	//{
-	//	if (DistanceFromTarget(target, angles) < distanceThreshold)
-	//	{
-	//		return;
-	//	}
+	public void InverseKinematics()
+	{
+		Vector3 target = trackdot.position;
 
-	//	for (int i = joints.Length - 1; i >= 0; i--)
-	//	{
-	//		float gradient = PartialGradientDescent(target, angles, i);
-	//		angles[i] -= learningRate * gradient;
+		//if (RealDistanceFromTarget(target, angles) < distanceThreshold)
+		//{
+		//	return;
+		//}
 
-	//		if (DistanceFromTarget(target, angles) < distanceThreshold)
-	//		{
-	//			return;
-	//		}
-	//	}
-	//}
+		for (int i = joints.Length - 1; i >= 0; i--)
+		{
+			float gradient = PartialGradientDescent(i);
+			//Debug.Log("joint " + i + " " + gradient);
+			angles[i] -= learningRate * gradient;
 
-	//public float PartialGradientDescent(Vector3 target, float[] angles, int i)
-	//{
-	//	// save the current angle
-	//	float angle = angles[i];
+			//if (RealDistanceFromTarget(target) < distanceThreshold)
+			//{
+			//	return;
+			//}
+		}
 
-	//	// Gradient : [F(x+SamplingDistance) - F(x)] / h
-	//	float f_x = DistanceFromTarget(target, angles);
-	//	angles[i] += samplingDistance;
-	//	float f_x_plus_d = DistanceFromTarget(target, angles);
-	//	float gradient = (f_x_plus_d - f_x) / samplingDistance;
+		UpdatedLocalAngles();
+	}
 
-	//	// restore current angle
-	//	angles[i] = angle;
-	//	return gradient;
-	//}
+	public float PartialGradientDescent(int i)
+	{
+		// save the current angle
+		float angle = angles[i];
+		Vector3 target = trackdot.position;
 
-	//public float DistanceFromTarget(Vector3 target, float[] angles)
-	//{
-	//	Vector3 point = ForwardKinematics(angles);
-	//	return Vector3.Distance(point, target);
-	//}
+		// Gradient : [F(x+SamplingDistance) - F(x)] / h
+		float f_x = RealDistanceFromTarget(target, angles);
+		angles[i] += deltaAngleToTestWith;
+		float f_x_plus_d = RealDistanceFromTarget(target, angles);
+		// why do we do a division by delta angle?
+		//float gradient = (f_x_plus_d - f_x) / deltaAngleToTestWith;
+		float myGradient = (f_x_plus_d - f_x);
+		Debug.Log("gradient for " + i + " is " + myGradient);
+		//Debug.Log(i + " current Dist: " + f_x + " new dist: " + f_x_plus_d + " results in " + gradient);
+
+		// restore current angle
+		angles[i] = angle;
+		return myGradient;
+	}
+
+	public float RealDistanceFromTarget(Vector3 target, float[] testAngles)
+	{
+		Vector3 point = ForwardKinematics(testAngles);
+		return Vector3.Distance(point, target);
+	}
 
 	private void TestAngles(float angle)
 	{
@@ -127,18 +132,19 @@ public class FKChain : MonoBehaviour
 		}
 	}
 
-	private Vector3 ForwardKinematicsLocalPos()
+	// returns the position of the end effector
+	private Vector3 ForwardKinematics(float[] anglesToTestWith)
 	{
 		Vector3 previousPoint = joints[0].transform.localPosition;
-		Quaternion rotation = Quaternion.identity;
+		Quaternion rotation = Quaternion.Euler(joints[0].startLocalAngle);
 
 		for (int i = 1; i < angles.Length; i++)
 		{
-			rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].localAxis);
+			rotation *= Quaternion.AngleAxis(anglesToTestWith[i - 1], joints[i - 1].localAxis);
 			previousPoint = previousPoint + rotation * joints[i].StartOffset;
 		}
 
-		return previousPoint;
+		return transform.TransformPoint(previousPoint);
 	}
 
 	private void DrawOffsets()
@@ -149,18 +155,14 @@ public class FKChain : MonoBehaviour
 		}
 
 		Gizmos.color = Color.yellow;
-		Vector3 previousPos = transform.position;
+		Vector3 previousPoint = joints[0].transform.localPosition;
+		Quaternion rotation = Quaternion.Euler(joints[0].startLocalAngle);
 
-		for (int i = 1; i < joints.Length; i++)
+		for (int i = 1; i < angles.Length; i++)
 		{
-			Vector3 jointGlobalPos = joints[i - 1].transform.TransformPoint(joints[i].StartOffset);
-
-			Gizmos.DrawLine(
-				previousPos,
-				jointGlobalPos
-			);
-			previousPos = jointGlobalPos;
-			Gizmos.DrawSphere(previousPos, 1f);
+			rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].localAxis);
+			previousPoint = previousPoint + rotation * joints[i].StartOffset;
+			Gizmos.DrawSphere(transform.TransformPoint(previousPoint), 1f);
 		}
 	}
 }
