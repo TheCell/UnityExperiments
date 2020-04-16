@@ -5,15 +5,16 @@ using UnityEngine;
 public class FKChain : MonoBehaviour
 {
 	[SerializeField] private Transform trackdot;
-	private Joint[] joints;
+	[SerializeField] private Joint[] joints;
 	private float samplingDistance;
 	private float learningRate;
 	private float distanceThreshold;
 	private float[] angles;
+	private float testangle = 0f;
 
 	private void Start()
 	{
-		joints = gameObject.GetComponentsInChildren<Joint>();
+		//joints = gameObject.GetComponentsInChildren<Joint>();
 		angles = new float[joints.Length];
 		for (int i = 0; i < joints.Length; i++)
 		{
@@ -33,8 +34,6 @@ public class FKChain : MonoBehaviour
 
 			angles[i] = angle;
 		}
-
-		//SetOffsets();
 	}
 
 	private void OnDrawGizmos()
@@ -44,6 +43,8 @@ public class FKChain : MonoBehaviour
 
 	private void Update()
 	{
+		TestAngles(testangle);
+		testangle++;
 		//InverseKinematics(trackdot.position, angles);
 
 		//for (int i = 0; i < angles.Length; i++)
@@ -53,16 +54,19 @@ public class FKChain : MonoBehaviour
 		//UpdatedLocalAngles();
 	}
 
-	private void UpdatedLocalAngles()
-	{
-		for (int i = 0; i < joints.Length; i++)
-		{
-			joints[i].UpdateAngle(angles[i]);
-		}
-	}
+	//private void SetOffsets()
+	//{
+	//	Vector3 previousPosition = transform.position;
+
+	//	for (int i = 0; i < joints.Length; i++)
+	//	{
+	//		Vector3 currentPos = joints[i].transform.position;
+	//		joints[i].StartOffset = currentPos - previousPosition;
+	//	}
+	//}
 
 	// every joint can only rotate around one local axis
-	//public void InverseKinematics (Vector3 target, float[] angles)
+	//public void InverseKinematics(Vector3 target, float[] angles)
 	//{
 	//	if (DistanceFromTarget(target, angles) < distanceThreshold)
 	//	{
@@ -74,7 +78,7 @@ public class FKChain : MonoBehaviour
 	//		float gradient = PartialGradientDescent(target, angles, i);
 	//		angles[i] -= learningRate * gradient;
 
-	//		if(DistanceFromTarget(target, angles) < distanceThreshold)
+	//		if (DistanceFromTarget(target, angles) < distanceThreshold)
 	//		{
 	//			return;
 	//		}
@@ -103,31 +107,38 @@ public class FKChain : MonoBehaviour
 	//	return Vector3.Distance(point, target);
 	//}
 
-	//public Vector3 ForwardKinematics(float[] angles)
-	//{
-	//	Vector3 previousPoint = joints[0].transform.position;
-	//	Quaternion rotation = Quaternion.identity;
-	//	for (int i = 1; i < angles.Length; i++)
-	//	{
-	//		rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].Axis);
-	//		Vector3 nextPoint = previousPoint + rotation * joints[i].StartOffset;
+	private void TestAngles(float angle)
+	{
+		for (int i = 0; i < joints.Length; i++)
+		{
+			angles[i] = angle;
+		}
 
-	//		previousPoint = nextPoint;
-	//	}
+		UpdatedLocalAngles();
+	}
 
-	//	return previousPoint;
-	//}
+	private void UpdatedLocalAngles()
+	{
+		for (int i = 0; i < joints.Length; i++)
+		{
+			joints[i].UpdateAngle(angles[i]);
+		}
+	}
 
-	//private void SetOffsets()
-	//{
-	//	Vector3 previousPosition = transform.position;
+	private Vector3 ForwardKinematicsLocalSpace(float[] angles)
+	{
+		Vector3 previousPoint = joints[0].transform.localPosition;
+		Quaternion rotation = Quaternion.identity;
+		for (int i = 1; i < angles.Length; i++)
+		{
+			rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].localAxis);
+			Vector3 nextPoint = previousPoint + rotation * joints[i].StartOffset;
 
-	//	for (int i = 0; i < joints.Length; i++)
-	//	{
-	//		Vector3 currentPos = joints[i].transform.position;
-	//		joints[i].StartOffset = currentPos - previousPosition;
-	//	}
-	//}
+			previousPoint = nextPoint;
+		}
+
+		return previousPoint;
+	}
 
 	private void DrawOffsets()
 	{
@@ -141,11 +152,14 @@ public class FKChain : MonoBehaviour
 
 		for (int i = 0; i < joints.Length; i++)
 		{
+			Vector3 jointGlobalPos = joints[i].transform.TransformPoint(joints[i].StartOffset);
+
 			Gizmos.DrawLine(
 				previousPos,
-				joints[i].transform.position
+				jointGlobalPos
 			);
-			previousPos = joints[i].transform.position;
+			previousPos = jointGlobalPos;
+			Gizmos.DrawSphere(previousPos, 1f);
 		}
 	}
 }

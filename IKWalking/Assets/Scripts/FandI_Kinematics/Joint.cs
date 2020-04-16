@@ -6,6 +6,8 @@ public class Joint : MonoBehaviour
 {
 	// saved which axis the rotation is
 	public Vector3 localAxis = Vector3.right;
+	public Vector3 startLocalAngle;
+	// offsets in global space
 	private Vector3 startOffset;
 
 	public float MinAngle;
@@ -15,21 +17,21 @@ public class Joint : MonoBehaviour
 
 	private void OnDrawGizmosSelected()
 	{
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere(transform.position, 1);
+		//Gizmos.color = Color.yellow;
+		//Gizmos.DrawSphere(transform.position, 1);
 
-		Debug.Log("Joint position: " + transform.position + " and local Position: " + transform.localPosition);
+		//Debug.Log("Joint position: " + transform.position + " and local Position: " + transform.localPosition);
 	}
 
 	private void Awake()
 	{
 		startOffset = transform.localPosition;
-		Debug.Log(startOffset);
+		startLocalAngle = transform.localEulerAngles;
 	}
 	
 	public void UpdateAngle(float angle)
 	{
-		Vector3 eulerAngles = transform.localRotation.eulerAngles;
+		Vector3 eulerAngles = startLocalAngle;
 		if (localAxis == Vector3.right)
 		{
 			eulerAngles.x = angle;
@@ -43,6 +45,7 @@ public class Joint : MonoBehaviour
 			eulerAngles.z = angle;
 		}
 
-		transform.localRotation = Quaternion.Euler(eulerAngles);
+		transform.localEulerAngles = eulerAngles;
+		Debug.Log(eulerAngles);
 	}
 }
