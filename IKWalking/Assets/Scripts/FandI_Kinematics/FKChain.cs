@@ -39,6 +39,8 @@ public class FKChain : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		DrawOffsets();
+		Gizmos.color = Color.red;
+		Gizmos.DrawSphere(transform.TransformPoint(ForwardKinematicsLocalPos()), 1f);
 	}
 
 	private void Update()
@@ -125,16 +127,15 @@ public class FKChain : MonoBehaviour
 		}
 	}
 
-	private Vector3 ForwardKinematicsLocalSpace(float[] angles)
+	private Vector3 ForwardKinematicsLocalPos()
 	{
 		Vector3 previousPoint = joints[0].transform.localPosition;
 		Quaternion rotation = Quaternion.identity;
+
 		for (int i = 1; i < angles.Length; i++)
 		{
 			rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].localAxis);
-			Vector3 nextPoint = previousPoint + rotation * joints[i].StartOffset;
-
-			previousPoint = nextPoint;
+			previousPoint = previousPoint + rotation * joints[i].StartOffset;
 		}
 
 		return previousPoint;
@@ -147,12 +148,12 @@ public class FKChain : MonoBehaviour
 			return;
 		}
 
-		Gizmos.color = Color.red;
+		Gizmos.color = Color.yellow;
 		Vector3 previousPos = transform.position;
 
-		for (int i = 0; i < joints.Length; i++)
+		for (int i = 1; i < joints.Length; i++)
 		{
-			Vector3 jointGlobalPos = joints[i].transform.TransformPoint(joints[i].StartOffset);
+			Vector3 jointGlobalPos = joints[i - 1].transform.TransformPoint(joints[i].StartOffset);
 
 			Gizmos.DrawLine(
 				previousPos,

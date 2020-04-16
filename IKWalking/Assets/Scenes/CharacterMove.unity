@@ -804,7 +804,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7702732181415879588, guid: 018df8b7b6f1b5a40b37129c2e95ac37, type: 3}
   m_PrefabInstance: {fileID: 896890314}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &668757030
+--- !u!114 &668757031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -817,6 +817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localAxis: {x: 1, y: 0, z: 0}
+  startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
   MaxAngle: 0
 --- !u!1 &676069391
@@ -1089,6 +1090,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1890798296313910702, guid: 018df8b7b6f1b5a40b37129c2e95ac37, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1890798296313910702, guid: 018df8b7b6f1b5a40b37129c2e95ac37, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1890798296313910702, guid: 018df8b7b6f1b5a40b37129c2e95ac37, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7299909607811728189, guid: 018df8b7b6f1b5a40b37129c2e95ac37, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0
@@ -1144,6 +1157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localAxis: {x: 1, y: 0, z: 0}
+  startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
   MaxAngle: 0
 --- !u!114 &896890320
@@ -1159,6 +1173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localAxis: {x: 1, y: 0, z: 0}
+  startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
   MaxAngle: 0
 --- !u!114 &896890321
@@ -1174,6 +1189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localAxis: {x: 0, y: 0, z: 1}
+  startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
   MaxAngle: 0
 --- !u!114 &896890322
@@ -1193,7 +1209,7 @@ MonoBehaviour:
   - {fileID: 896890321}
   - {fileID: 896890320}
   - {fileID: 896890319}
-  - {fileID: 668757030}
+  - {fileID: 668757031}
 --- !u!1 &1073470964
 GameObject:
   m_ObjectHideFlags: 0

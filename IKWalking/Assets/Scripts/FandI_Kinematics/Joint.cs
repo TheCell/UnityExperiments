@@ -46,6 +46,6 @@ public class Joint : MonoBehaviour
 		}
 
 		transform.localEulerAngles = eulerAngles;
-		Debug.Log(eulerAngles);
+		//Debug.Log(eulerAngles);
 	}
 }
