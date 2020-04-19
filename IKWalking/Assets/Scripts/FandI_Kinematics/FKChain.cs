@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// thanks to https://www.alanzucconi.com/2017/04/17/procedural-animations/
+// but there were a lot of things mixed up (worldpositions and localpositions)
 public class FKChain : MonoBehaviour
 {
 	[SerializeField] private Transform trackdot;
@@ -12,9 +14,12 @@ public class FKChain : MonoBehaviour
 	private float distanceThreshold = 0.01f;
 	private float[] angles;
 	private float debugAngle = 0f;
+	private bool drawInRunmode = false;
 
 	private void Start()
 	{
+		drawInRunmode = true;
+
 		// we get the joints manually to ensure order
 		angles = new float[joints.Length];
 		for (int i = 0; i < joints.Length; i++)
@@ -27,9 +32,12 @@ public class FKChain : MonoBehaviour
 
 	private void OnDrawGizmos()
 	{
-		DrawOffsets();
-		Gizmos.color = Color.red;
-		Gizmos.DrawSphere(ForwardKinematics(angles), 1f);
+		if (drawInRunmode)
+		{
+			DrawOffsets();
+			Gizmos.color = Color.red;
+			Gizmos.DrawSphere(ForwardKinematics(angles), 1f);
+		}
 	}
 
 	private void Update()
@@ -133,11 +141,6 @@ public class FKChain : MonoBehaviour
 
 	private void DrawOffsets()
 	{
-		if (joints == null || angles == null)
-		{
-			return;
-		}
-
 		Gizmos.color = Color.yellow;
 		Vector3 previousPoint = joints[0].transform.localPosition;
 		Quaternion rotation = Quaternion.Euler(joints[0].startLocalAngle);
