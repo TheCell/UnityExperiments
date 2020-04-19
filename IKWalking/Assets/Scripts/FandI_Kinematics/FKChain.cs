@@ -6,32 +6,20 @@ public class FKChain : MonoBehaviour
 {
 	[SerializeField] private Transform trackdot;
 	[SerializeField] private Joint[] joints;
-	private float deltaAngleToTestWith = 5f;
-	private float learningRate = 2.1f;
-	private float distanceThreshold = 0.1f;
+	private float deltaAngleToTestWith = 10f;
+	private float learningRate = 5f;
+	// stop jittering at the target
+	private float distanceThreshold = 0.01f;
 	private float[] angles;
-	private float testangle = 0f;
-	private int debugCounter = 0;
+	private float debugAngle = 0f;
 
 	private void Start()
 	{
-		//joints = gameObject.GetComponentsInChildren<Joint>();
+		// we get the joints manually to ensure order
 		angles = new float[joints.Length];
 		for (int i = 0; i < joints.Length; i++)
 		{
 			float angle = 0f;
-			//if (joints[i].localAxis == Vector3.right)
-			//{
-			//	angle = joints[i].transform.eulerAngles.x;
-			//}
-			//else if (joints[i].localAxis == Vector3.up)
-			//{
-			//	angle = joints[i].transform.eulerAngles.y;
-			//}
-			//else
-			//{
-			//	angle = joints[i].transform.eulerAngles.z;
-			//}
 
 			angles[i] = angle;
 		}
@@ -46,20 +34,10 @@ public class FKChain : MonoBehaviour
 
 	private void Update()
 	{
-		//Debug.Log(angles[1]);
 		//TestAngles(testangle);
 		//testangle++;
-		//if (debugCounter % 10 == 0)
-		//{
-		//}
-		//debugCounter++;
-		InverseKinematics();
-
-		//for (int i = 0; i < angles.Length; i++)
-		//{
-		//	Debug.Log(angles[i]);
-		//}
 		//UpdatedLocalAngles();
+		InverseKinematics();
 	}
 
 	// every joint can only rotate around one local axis
@@ -67,21 +45,25 @@ public class FKChain : MonoBehaviour
 	{
 		Vector3 target = trackdot.position;
 
-		//if (RealDistanceFromTarget(target, angles) < distanceThreshold)
-		//{
-		//	return;
-		//}
+		if (RealDistanceFromTarget(target, angles) < distanceThreshold)
+		{
+			return;
+		}
 
 		for (int i = joints.Length - 1; i >= 0; i--)
 		{
 			float gradient = PartialGradientDescent(i);
-			//Debug.Log("joint " + i + " " + gradient);
 			angles[i] -= learningRate * gradient;
 
-			//if (RealDistanceFromTarget(target) < distanceThreshold)
-			//{
-			//	return;
-			//}
+			angles[i] = Mathf.Clamp(
+				angles[i], 
+				joints[i].MinAngle, 
+				joints[i].MaxAngle);
+
+			if (RealDistanceFromTarget(target, angles) < distanceThreshold)
+			{
+				return;
+			}
 		}
 
 		UpdatedLocalAngles();
@@ -99,13 +81,13 @@ public class FKChain : MonoBehaviour
 		float f_x_plus_d = RealDistanceFromTarget(target, angles);
 		// why do we do a division by delta angle?
 		//float gradient = (f_x_plus_d - f_x) / deltaAngleToTestWith;
-		float myGradient = (f_x_plus_d - f_x);
-		Debug.Log("gradient for " + i + " is " + myGradient);
+		float gradient = (f_x_plus_d - f_x);
+		//Debug.Log("gradient for " + i + " is " + gradient);
 		//Debug.Log(i + " current Dist: " + f_x + " new dist: " + f_x_plus_d + " results in " + gradient);
 
 		// restore current angle
 		angles[i] = angle;
-		return myGradient;
+		return gradient;
 	}
 
 	public float RealDistanceFromTarget(Vector3 target, float[] testAngles)
@@ -140,7 +122,9 @@ public class FKChain : MonoBehaviour
 
 		for (int i = 1; i < angles.Length; i++)
 		{
-			rotation *= Quaternion.AngleAxis(anglesToTestWith[i - 1], joints[i - 1].localAxis);
+			rotation *= Quaternion.AngleAxis(
+				anglesToTestWith[i - 1], 
+				joints[i - 1].localAxis);
 			previousPoint = previousPoint + rotation * joints[i].StartOffset;
 		}
 
@@ -149,7 +133,7 @@ public class FKChain : MonoBehaviour
 
 	private void DrawOffsets()
 	{
-		if (joints == null)
+		if (joints == null || angles == null)
 		{
 			return;
 		}
@@ -160,7 +144,9 @@ public class FKChain : MonoBehaviour
 
 		for (int i = 1; i < angles.Length; i++)
 		{
-			rotation *= Quaternion.AngleAxis(angles[i - 1], joints[i - 1].localAxis);
+			rotation *= Quaternion.AngleAxis(
+				angles[i - 1], 
+				joints[i - 1].localAxis);
 			previousPoint = previousPoint + rotation * joints[i].StartOffset;
 			Gizmos.DrawSphere(transform.TransformPoint(previousPoint), 1f);
 		}

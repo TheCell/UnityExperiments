@@ -9,9 +9,9 @@ public class Joint : MonoBehaviour
 	public Vector3 startLocalAngle;
 	// offsets in global space
 	private Vector3 startOffset;
-
-	public float MinAngle;
-	public float MaxAngle;
+	
+	public float MinAngle = 0;
+	public float MaxAngle = 360;
 
 	public Vector3 StartOffset { get => startOffset; }
 
@@ -19,8 +19,6 @@ public class Joint : MonoBehaviour
 	{
 		//Gizmos.color = Color.yellow;
 		//Gizmos.DrawSphere(transform.position, 1);
-
-		//Debug.Log("Joint position: " + transform.position + " and local Position: " + transform.localPosition);
 	}
 
 	private void Awake()
@@ -46,6 +44,5 @@ public class Joint : MonoBehaviour
 		}
 
 		transform.localEulerAngles = eulerAngles;
-		//Debug.Log(eulerAngles);
 	}
 }

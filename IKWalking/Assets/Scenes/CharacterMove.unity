@@ -1159,7 +1159,7 @@ MonoBehaviour:
   localAxis: {x: 1, y: 0, z: 0}
   startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
-  MaxAngle: 0
+  MaxAngle: 90
 --- !u!114 &896890320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1175,7 +1175,7 @@ MonoBehaviour:
   localAxis: {x: 1, y: 0, z: 0}
   startLocalAngle: {x: 0, y: 0, z: 0}
   MinAngle: 0
-  MaxAngle: 0
+  MaxAngle: 90
 --- !u!114 &896890321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1190,8 +1190,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localAxis: {x: 0, y: 0, z: 1}
   startLocalAngle: {x: 0, y: 0, z: 0}
-  MinAngle: 0
-  MaxAngle: 0
+  MinAngle: -360
+  MaxAngle: 360
 --- !u!114 &896890322
 MonoBehaviour:
   m_ObjectHideFlags: 0
