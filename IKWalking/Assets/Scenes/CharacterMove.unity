@@ -921,7 +921,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 619425061}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 12.615, z: 0}
+  m_LocalPosition: {x: 0, y: 10.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 748896004}
@@ -1133,7 +1133,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 748896003}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.43, y: 0.09, z: 8}
+  m_LocalPosition: {x: 15.35, y: 0.09, z: 8.019}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 619425062}
@@ -1215,8 +1215,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   homeTransform: {fileID: 1273005310}
-  wantStepAtDistance: 1
-  moveDuration: 0.2
+  wantStepAtDistance: 1.5
+  moveDuration: 0.1
+  stepOvershootFraction: 0.5
 --- !u!1 &753261020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2405,6 +2406,7 @@ MonoBehaviour:
   homeTransform: {fileID: 8929713045549660688}
   wantStepAtDistance: 0.5
   moveDuration: 0.2
+  stepOvershootFraction: 0
 --- !u!137 &19698522986791843
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -2786,7 +2788,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9063990142150137105, guid: 8b802a70b01815442ba8b7af0b963a8c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.63
+      value: 1.604
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b802a70b01815442ba8b7af0b963a8c, type: 3}
