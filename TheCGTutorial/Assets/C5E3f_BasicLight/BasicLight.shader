@@ -2,14 +2,14 @@
 {
     Properties
     {
-       _GlobalAmbient("Global Ambient Color", Color) = (1, 1, 1)
-	   _LightPosition("Light Position", Vector) = (1, 1, 0)
-	   _LightColor("Light Color", Vector) = (1, 1, 1)
-	   _Ke("Emission Color", Color) = (0, 0, 0)
-	   _Ka("Ambient Reflectance RGB Channel", Vector) = (1, 1, 1)
-	   _Kd("Diffuse Color", Vector) = (1, 1, 1)
-	   _Ks("Specular Color", Vector) = (1, 1, 1)
-	   _Shininess("Shininess", Float) = 1
+		_GlobalAmbient("Global Ambient Color", Color) = (1, 1, 1)
+		_LightPosition("Light Position", Vector) = (1, 1, 0)
+		_LightColor("Light Color", Vector) = (1, 1, 1)
+		_Ke("Emission Color", Color) = (0, 0, 0)
+		_Ka("Ambient Reflectance RGB Channel", Vector) = (1, 1, 1)
+		_Kd("Diffuse Color", Vector) = (1, 1, 1)
+		_Ks("Specular Color", Vector) = (1, 1, 1)
+		_Shininess("Shininess", Float) = 1
     }
     SubShader
     {
