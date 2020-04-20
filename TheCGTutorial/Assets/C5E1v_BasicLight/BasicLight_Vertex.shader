@@ -53,7 +53,7 @@
                 o.oPosition = UnityObjectToClipPos(v.vertex);
 
 				float3 P = v.vertex.xyz;
-				float3 N = v.normal;
+				float3 N = normalize(v.normal);
 
 				float3 emissive = _Ke;
 
