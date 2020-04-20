@@ -10,8 +10,23 @@ public class MainCharIK : MonoBehaviour
 	[SerializeField] private float headRotationSpeed = 0.1f;
 	[SerializeField] private float headMaxTurnAngle = 40f;
 
+	[SerializeField] LegStepper frontLeftLeg;
+	[SerializeField] LegStepper frontRightLeg;
+	[SerializeField] LegStepper backLeftLeg;
+	[SerializeField] LegStepper backRightLeg;
+
+	private void Awake()
+	{
+		StartCoroutine(LegUpdateCoroutine());
+	}
+
 	private void Start()
 	{
+	}
+
+	private void Update()
+	{
+		
 	}
 
 	// We will put all our animation code in LateUpdate.
@@ -39,5 +54,27 @@ public class MainCharIK : MonoBehaviour
 			targetLocalRotation,
 			1 - Thecelleu.Utilities.Damp(1, headRotationSpeed, Time.deltaTime)
 		);
+	}
+
+	IEnumerator LegUpdateCoroutine()
+	{
+		while (true)
+		{
+			do
+			{
+				frontLeftLeg.TryMove();
+				backRightLeg.TryMove();
+				yield return null;
+			}
+			while (backRightLeg.IsMoving || frontLeftLeg.IsMoving);
+
+			do
+			{
+				frontRightLeg.TryMove();
+				backLeftLeg.TryMove();
+				yield return null;
+			}
+			while (backLeftLeg.IsMoving || frontRightLeg.IsMoving);
+		}
 	}
 }

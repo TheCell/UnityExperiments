@@ -11,7 +11,9 @@ public class LegStepper : MonoBehaviour
 
 	private bool isMoving;
 
-	private void Update()
+	public bool IsMoving { get => isMoving; }
+
+	public void TryMove()
 	{
 		if (isMoving)
 		{
@@ -48,6 +50,7 @@ public class LegStepper : MonoBehaviour
 		{
 			timeElapsed += Time.deltaTime;
 			float normalizedTime = timeElapsed / moveDuration;
+			normalizedTime = Easing.Cubic.InOut(normalizedTime);
 
 			transform.position = 
 				Vector3.Lerp(
