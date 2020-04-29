@@ -49,7 +49,11 @@ public class MovingSpherePhysics : MonoBehaviour
 		playerInput.y = Input.GetAxis("Vertical");
 		desiredVelocity = new Vector3(playerInput.x, 0f, playerInput.y) * maxSpeed;
 		desiredJump |= Input.GetButtonDown("Jump");
-    }
+
+		GetComponent<Renderer>().material.SetColor(
+			"_Color", Color.white * (groundContactCount * 0.25f)
+		);
+	}
 
 	private void FixedUpdate()
 	{
