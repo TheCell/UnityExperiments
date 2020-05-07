@@ -12,6 +12,9 @@ public class OrbitCamera : MonoBehaviour
 	private float focusRadius = 1f;
 	[SerializeField, Range(0f, 1f)]
 	private float focusCentering = 0.5f;
+	[SerializeField, Range(1f, 360f)]
+	private float rotationSpeed = 90f;
+	private Vector2 orbitAngles = new Vector2(45f, 0f);
 
 	private Vector3 focusPoint;
 
@@ -23,8 +26,11 @@ public class OrbitCamera : MonoBehaviour
 	private void LateUpdate()
 	{
 		UpdateFocusPoint();
-		Vector3 lookDirection = transform.forward;
-		transform.localPosition = focusPoint - lookDirection * distance;
+		ManualRotation();
+		Quaternion lookRotation = Quaternion.Euler(orbitAngles);
+		Vector3 lookDirection = lookRotation * Vector3.forward;
+		Vector3 lookPosition = focusPoint - lookDirection * distance;
+		transform.SetPositionAndRotation(lookPosition, lookRotation);
 	}
 
 	private void UpdateFocusPoint()
@@ -50,6 +56,19 @@ public class OrbitCamera : MonoBehaviour
 		else
 		{
 			focusPoint = targetPoint;
+		}
+	}
+
+	private void ManualRotation ()
+	{
+		Vector2 input = new Vector2(
+			Input.GetAxis("Vertical Camera"),
+			Input.GetAxis("Horizontal Camera")
+			);
+		const float e = 0.001f;
+		if (input.x < -e || input.x > e || input.y < -e || input.y > e)
+		{
+			orbitAngles += rotationSpeed * Time.unscaledDeltaTime * input;
 		}
 	}
 }
