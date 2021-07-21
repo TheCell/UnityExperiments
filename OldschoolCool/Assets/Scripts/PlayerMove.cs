@@ -13,8 +13,8 @@ public class PlayerMove : MonoBehaviour
     [Header("Move & Jump Setting")]
     [SerializeField] private float moveSpeed = 10;
     [SerializeField] private float fallWeight = 5.0f;
-    [SerializeField] private float jumpWeight = 0.5f;
-    [SerializeField] private float jumpVelocity = 100.0f;
+    [SerializeField] private float jumpWeight = 1.0f;
+    [SerializeField] private float jumpVelocity = 10.0f;
 
     private bool isJumping = false;
     private float jumpTimestamp;
@@ -36,6 +36,11 @@ public class PlayerMove : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		if (moveVec != Vector3.zero)
+		{
+			transform.LookAt(this.transform.position + moveVec.normalized);
+		}
+
 		if (isJumping == false)
 		{
 			UpdateWhenGrounded();
@@ -62,11 +67,6 @@ public class PlayerMove : MonoBehaviour
 	{
 		rigidbody.velocity = moveVec * moveSpeed;
 
-		if (moveVec != Vector3.zero)
-		{
-			transform.LookAt(this.transform.position + moveVec.normalized);
-		}
-
 		CheckShouldFall();
 	}
 
@@ -78,6 +78,7 @@ public class PlayerMove : MonoBehaviour
 	public void OnMove(InputValue input)
 	{
 		Vector2 inputVec = input.Get<Vector2>();
+		Debug.Log(inputVec);
 
 		moveVec = new Vector3(inputVec.x, 0, inputVec.y);
 	}
